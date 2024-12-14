@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Form Builder</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h1>Custom Form Builder</h1>
+
+    <div class="form-builder">
+        <h3>Form Builder</h3>
+        <div id="form-fields">
+        </div>
+        <button id="add-text-field">Add Text Field</button>
+        <button id="add-select-field">Add Select Field</button>
+        <button id="submit-form">Submit</button>
+    </div>
+
+    <table id="form-data-table">
+        <!-- the table will be here :)) -->
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            let fieldCount = 0;
+
+            // add a text field
+            $('#add-text-field').click(function() {
+                fieldCount++;
+                const textFieldHtml = `
+                    <div class="field" id="field-${fieldCount}">
+                        <label for="text-${fieldCount}">Text Field:</label>
+                        <input type="text" id="text-${fieldCount}" name="text-${fieldCount}" placeholder="Enter text">
+                        <button class="remove-field" data-id="field-${fieldCount}">Remove</button>
+                    </div>`;
+                $('#form-fields').append(textFieldHtml);
+            });
+
+            // add a select field
+            $('#add-select-field').click(function() {
+                fieldCount++;
+                const selectFieldHtml = `
+                    <div class="field" id="field-${fieldCount}">
+                        <label for="select-${fieldCount}">Select Field:</label>
+                        <select id="select-${fieldCount}" name="select-${fieldCount}">
+                            <option value="Option 1">Option 1</option>
+                            <option value="Option 2">Option 2</option>
+                            <option value="Option 3">Option 3</option>
+                        </select>
+                        <button class="remove-field" data-id="field-${fieldCount}">Remove</button>
+                    </div>`;
+                $('#form-fields').append(selectFieldHtml);
+            });
+
+            // remove a field
+            $(document).on('click', '.remove-field', function() {
+                const fieldId = $(this).data('id');
+                $(`#${fieldId}`).remove();
+            });
+
+            // submit the form and display the data in a table
+            $('#submit-form').click(function() {
+                const headers = [];
+                const values = [];
+
+                // collect field data
+                $('#form-fields .field').each(function() {
+                    const label = $(this).find('label').text().replace(':', '');
+                    headers.push(label);
+
+                    const inputValue = $(this).find('input, select').val();
+                    values.push(inputValue);
+                });
+
+                // create the table
+                let tableHtml = '<tr>';
+                headers.forEach(header => {
+                    tableHtml += `<th>${header}</th>`;
+                });
+                tableHtml += '</tr><tr>';
+                values.forEach(value => {
+                    tableHtml += `<td>${value}</td>`;
+                });
+                tableHtml += '</tr>';
+
+                $('#form-data-table').html(tableHtml);
+            });
+        });
+    </script>
+</body>
+</html>
